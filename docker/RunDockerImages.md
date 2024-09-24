@@ -7,12 +7,12 @@
 
 Run Gateway
 ```shell
-docker run --name gateway -d -p 8080:8080 spring-6-gateway:0.0.1-SNAPSHOT
+docker run --name gateway -d -p 8080:8080 spring-6-cloud-gateway:0.0.1-SNAPSHOT
 ```
 
 Run Gateway on Apple Silicon
 ```shell
-docker run --name gateway -d -p 8080:8080 --platform linux/amd64 spring-6-gateway:0.0.1-SNAPSHOT
+docker run --name gateway -d -p 8080:8080 --platform linux/amd64 spring-6-cloud-gateway:0.0.1-SNAPSHOT
 ```
 
 Remove Container
@@ -62,9 +62,10 @@ docker run --name rest-mvc -d -p 8081:8081 -e SPRING_PROFILES_ACTIVE=localmysql 
 
 Run Gateway with active profile docker
 ```shell
-docker run --name gateway -d -p 8080:8080 -e SPRING_PROFILES_ACTIVE=docker spring-6-gateway:0.0.1-SNAPSHOT
-
-docker run --name gateway -d -p 8080:8080 -e SPRING_PROFILES_ACTIVE=docker --link auth-server:auth-server spring-6-gateway:0.0.1-SNAPSHOT
+docker run --name gateway -d -p 8080:8080 -e SPRING_PROFILES_ACTIVE=docker spring-6-cloud-gateway:0.0.1-SNAPSHOT
+```
+```shell
+docker run --name gateway -d -p 8080:8080 -e SPRING_PROFILES_ACTIVE=docker --link auth-server:auth-server spring-6-cloud-gateway:0.0.1-SNAPSHOT
 ```
 
 Run Auth Server with host name set to auth-server
@@ -81,7 +82,7 @@ Rerun gateway with link to auth-server and rest-mvc
 ```shell
 docker stop gateway 
 docker rm gateway
-docker run --name gateway -d -p 8080:8080 -e SPRING_PROFILES_ACTIVE=docker --link auth-server:auth-server --link rest-mvc:rest-mvc spring-6-gateway:0.0.1-SNAPSHOT
+docker run --name gateway -d -p 8080:8080 -e SPRING_PROFILES_ACTIVE=docker --link auth-server:auth-server --link rest-mvc:rest-mvc spring-6-cloud-gateway:0.0.1-SNAPSHOT
 ```
 
 Run MySQL
@@ -109,7 +110,7 @@ Rerun gateway with link to auth-server and rest-mvc and reactive
 docker stop gateway 
 docker rm gateway
 docker run --name gateway -d -p 8080:8080 -e SPRING_PROFILES_ACTIVE=docker --link auth-server:auth-server --link rest-mvc:rest-mvc \
---link reactive:reactive spring-6-gateway:0.0.1-SNAPSHOT
+--link reactive:reactive spring-6-cloud-gateway:0.0.1-SNAPSHOT
 ```
 
 Run MongoDB
@@ -127,7 +128,7 @@ Rerun gateway with link to auth-server and rest-mvc and reactive and reactive-mo
 docker stop gateway 
 docker rm gateway
 docker run --name gateway -d -p 8080:8080 -e SPRING_PROFILES_ACTIVE=docker --link auth-server:auth-server --link rest-mvc:rest-mvc \
---link reactive:reactive --link reactive-mongo:reactive-mongo spring-6-gateway:0.0.1-SNAPSHOT
+--link reactive:reactive --link reactive-mongo:reactive-mongo spring-6-cloud-gateway:0.0.1-SNAPSHOT
 ```
 
 
