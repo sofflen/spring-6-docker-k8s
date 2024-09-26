@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: rest-mvc
+  name: rest-mvc
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: rest-mvc
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: rest-mvc
+    spec:
+      containers:
+      - image: spring-6-rest-mvc:0.0.1-SNAPSHOT
+        name: spring-6-rest-mvc
+        env:
+          - name: SERVER_PORT
+            value: "8080"
+          - name: SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI
+            value: http://auth-server:9000
+          - name: SPRING_PROFILES_ACTIVE
+            value: localpostgresql
+          - name: SPRING_DATASOURCE_USERNAME
+            value: restadmin
+          - name: SPRING_DATASOURCE_PASSWORD
+            value: password
+          - name: SPRING_DATASOURCE_URL
+            value: jdbc:postgresql://postgres:5432/restdb
+        resources: {}
+status: {}

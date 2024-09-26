@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: reactive-mongo
+  name: reactive-mongo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: reactive-mongo
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: reactive-mongo
+    spec:
+      containers:
+      - image: spring-6-reactive-mongo:0.0.1-SNAPSHOT
+        name: spring-6-reactive-mongo
+        env:
+          - name: SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI
+            value: http://auth-server:9000
+          - name: SERVER_PORT
+            value: "8080"
+          - name: MONGO_DB_HOST
+            value: mongo
+          - name: MONGO_DB_USER
+            value: root
+          - name: MONGO_DB_PASSWORD
+            value: example
+        resources: {}
+status: {}
