@@ -1,0 +1,76 @@
+services:
+  postgres:
+    image: postgres:16
+    platform: linux/arm64/v8
+    environment:
+      POSTGRES_USER: restadmin
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: restdb
+
+  mongo:
+    image: mongo:latest
+    platform: linux/arm64/v8
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
+
+  auth-server:
+    image: spring-6-auth-server:0.0.1-SNAPSHOT
+    platform: linux/amd64
+    expose:
+      - "9000"
+
+  rest-mvc:
+    image: spring-6-rest-mvc:0.0.1-SNAPSHOT
+    platform: linux/amd64
+    environment:
+      SERVER_PORT: 8080
+      SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI: http://auth-server:9000
+      SPRING_PROFILES_ACTIVE: localpostgresql
+      SPRING_DATASOURCE_USERNAME: restadmin
+      SPRING_DATASOURCE_PASSWORD: password
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/restdb
+    expose:
+      - "8080"
+    depends_on:
+      - auth-server
+      - postgres
+
+  reactive:
+    image: spring-6-reactive:0.0.1-SNAPSHOT
+    platform: linux/amd64
+    environment:
+      SERVER_PORT: 8080
+      SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI: http://auth-server:9000
+    expose:
+      - "8080"
+    depends_on:
+      - auth-server
+
+  reactive-mongo:
+    image: spring-6-reactive-mongo:0.0.1-SNAPSHOT
+    platform: linux/amd64
+    environment:
+      SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI: http://auth-server:9000
+      SERVER_PORT: 8080
+      MONGO_DB_HOST: mongo
+      MONGO_DB_USER: root
+      MONGO_DB_PASSWORD: example
+    expose:
+      - "8080"
+    depends_on:
+      - auth-server
+      - mongo
+
+  gateway:
+    image: spring-6-cloud-gateway:0.0.1-SNAPSHOT
+    platform: linux/amd64
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+    ports:
+      - 8080:8080
+    depends_on:
+      - auth-server
+      - rest-mvc
+      - reactive
+      - reactive-mongo
