@@ -85,24 +85,24 @@ docker rm gateway
 docker run --name gateway -d -p 8080:8080 -e SPRING_PROFILES_ACTIVE=docker --link auth-server:auth-server --link rest-mvc:rest-mvc spring-6-cloud-gateway:0.0.1-SNAPSHOT
 ```
 
-Run MySQL
+Run PostgreSQL
 ```shell
-docker run --name mysql -d -e MYSQL_USER=restadmin -e MYSQL_PASSWORD=password -e MYSQL_DATABASE=restdb -e MYSQL_ROOT_PASSWORD=password mysql:8
+docker run --name postgres -d -e POSTGRES_USER=restadmin -e POSTGRES_PASSWORD=password -e POSTGRES_DB=restdb postgres:16
 ```
 
-Run rest-mvc with link to mysql
+Run rest-mvc with link to postgresql
 ```shell
 docker stop rest-mvc
 docker rm rest-mvc
-docker run --name rest-mvc -d -p 8081:8080 -e SPRING_PROFILES_ACTIVE=localmysql \
- -e SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI=http://auth-server:9000 -e SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/restdb  \
- -e SERVER_PORT=8080 --link auth-server:auth-server --link mysql:mysql spring-6-rest-mvc:0.0.1-SNAPSHOT
+docker run --name rest-mvc -d -p 8081:8080 -e SPRING_PROFILES_ACTIVE=localpostgresql \
+ -e SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI=http://auth-server:9000 -e SPRING_DATASOURCE_URL=jdbc:postgresql://posrgres:5432/restdb  \
+ -e SERVER_PORT=8080 --link auth-server:auth-server --link postgres:postgres spring-6-rest-mvc:0.0.1-SNAPSHOT
 ```
 
 Run Reactive Container
 ```shell    
-docker run --name reactive -d -p 8082:8082 -e SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI=http://auth-server:9000 \
- --link auth-server:auth-server spring-6-reactive:0.0.1-SNAPSHOT
+docker run --name reactive -d -p 8082:8080 -e SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI=http://auth-server:9000 \
+-e SERVER_PORT=8080 --link auth-server:auth-server spring-6-reactive:0.0.1-SNAPSHOT
 ```
 
 Rerun gateway with link to auth-server and rest-mvc and reactive
@@ -115,13 +115,13 @@ docker run --name gateway -d -p 8080:8080 -e SPRING_PROFILES_ACTIVE=docker --lin
 
 Run MongoDB
 ```shell
-docker run -d --name mongo -e MONGO_INITDB_ROOT_USERNAME=root -e MONGO_INITDB_ROOT_PASSWORD=example -p 27017:27017 mongo 
+docker run -d --name mongo -e MONGO_INITDB_ROOT_USERNAME=root -e MONGO_INITDB_ROOT_PASSWORD=example -p 27017:27017 mongo:latest
 ```
 
 Run Reactive Mongo
 ```shell
-docker run --name reactive-mongo -d  -e SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI=http://auth-server:9000 \
- -e SFG_MONGOHOST=mongo -e SERVER_PORT=8080 --link auth-server:auth-server --link mongo:mongo reactive-mongo:0.0.1-SNAPSHOT
+docker run --name reactive-mongo -d -e SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI=http://auth-server:9000 \
+ -e MONGO_DB_HOST=mongo -e SERVER_PORT=8080 --link auth-server:auth-server --link mongo:mongo spring-6-reactive-mongo:0.0.1-SNAPSHOT
 ```
 Rerun gateway with link to auth-server and rest-mvc and reactive and reactive-mongo
 ```shell
@@ -130,12 +130,3 @@ docker rm gateway
 docker run --name gateway -d -p 8080:8080 -e SPRING_PROFILES_ACTIVE=docker --link auth-server:auth-server --link rest-mvc:rest-mvc \
 --link reactive:reactive --link reactive-mongo:reactive-mongo spring-6-cloud-gateway:0.0.1-SNAPSHOT
 ```
-
-
-
-
-
-
-
-
-
